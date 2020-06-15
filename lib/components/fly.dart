@@ -1,6 +1,8 @@
 import 'dart:ui';
+import 'package:flame_game/components/callout.dart';
 import 'package:flame_game/langaw-game.dart';
 import 'package:flame/sprite.dart';
+import 'package:flame_game/view.dart';
 
 class Fly {
 
@@ -13,6 +15,7 @@ class Fly {
   Sprite deadSprite;
   double flyingSpriteIndex = 0;
   Offset targetLocation;
+  Callout callout;
 
   /*Fly(this.game, double x, double y) {
     flyRect = Rect.fromLTWH(x, y, game.tileSize, game.tileSize);
@@ -22,6 +25,7 @@ class Fly {
 
   Fly(this.game){
     setTargetLocation();
+    callout = Callout(this);
   }
 
   double get speed => game.tileSize * 3;
@@ -31,6 +35,9 @@ class Fly {
       deadSprite.renderRect(c, flyRect.inflate(2));
     } else {
       flyingSprite[flyingSpriteIndex.toInt()].renderRect(c, flyRect.inflate(2));
+    }
+    if (game.activeView == View.playing) {
+      callout.render(c);
     }
   }
 
@@ -55,14 +62,25 @@ class Fly {
         flyRect = flyRect.shift(toTarget);
         setTargetLocation();
       }
+      callout.update(t);
     }
   }
 
   void onTapDown() {
-//    flyPaint.color = Color(0xffff4757);
-    isDead = true;
-//    game.spawnFly();
-//    c.drawRect(flyRect, flyPaint);
+    if (!isDead) {
+      isDead = true;
+
+      if (game.activeView == View.playing) {
+        // increase the score by one each time.
+        game.score += 1;
+
+        // it current score is highest store it using shared prefs and show it on screen
+        if (game.score > (game.storage.getInt('highscore') ?? 0)) {
+          game.storage.setInt('highscore', game.score);
+          game.highscoreDisplay.updateHighscore();
+        }
+      }
+    }
   }
 
   void setTargetLocation() {

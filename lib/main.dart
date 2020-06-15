@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flame_game/langaw-game.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flame/flame.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,9 +37,11 @@ void main() async {
     'ui/icon-credits.png',
     'ui/icon-help.png',
     'ui/start-button.png',
+    'ui/callout.png',
   ]);
 
-  LangawGame game = LangawGame();
+  SharedPreferences storage = await SharedPreferences.getInstance();
+  LangawGame game = LangawGame(storage);
   runApp(game.widget);
 
   TapGestureRecognizer tapper = TapGestureRecognizer();

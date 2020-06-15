@@ -6,10 +6,12 @@ import 'package:flame_game/components/backyard.dart';
 import 'package:flame_game/components/credits-button.dart';
 import 'package:flame_game/components/fly.dart';
 import 'package:flame_game/components/help-button.dart';
+import 'package:flame_game/components/highscore-display.dart';
 import 'package:flame_game/components/house-fly.dart';
 import 'package:flame_game/components/agile-fly.dart';
 import 'package:flame_game/components/drooler-fly.dart';
 import 'package:flame_game/components/hungry-fly.dart';
+import 'package:flame_game/components/score-display.dart';
 import 'package:flame_game/views/credits-view.dart';
 import 'package:flame_game/views/help-view.dart';
 import 'package:flame_game/views/lost-view.dart';
@@ -19,8 +21,10 @@ import 'package:flame_game/controllers/spawner.dart';
 import 'package:flame_game/views/home-view.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flame_game/view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LangawGame extends Game {
+  final SharedPreferences storage;
   Size screenSize;
   double tileSize;
   Random rnd;
@@ -39,11 +43,16 @@ class LangawGame extends Game {
   HelpView helpView;
   CreditsView creditsView;
 
-  LangawGame() {
+  int score;
+  ScoreDisplay scoreDisplay;
+  HighscoreDisplay highscoreDisplay;
+
+  LangawGame(this.storage) {
     initialize();
   }
 
   void initialize() async {
+    score = 0;
     rnd = Random();
     flies = List<Fly>();
     resize(await Flame.util.initialDimensions());
@@ -60,8 +69,8 @@ class LangawGame extends Game {
     lostView = LostView(this);
     helpView = HelpView(this);
     creditsView = CreditsView(this);
-
-    int score;
+    scoreDisplay = ScoreDisplay(this);
+    highscoreDisplay = HighscoreDisplay(this);
   }
 
   void spawnFly() {
@@ -87,7 +96,13 @@ class LangawGame extends Game {
   }
 
   void render(Canvas canvas) {
+    //first render the background
     background.render(canvas);
+
+    highscoreDisplay.render(canvas);
+
+    // render the score just after the background
+    if (activeView == View.playing) scoreDisplay.render(canvas);
 
     flies.forEach((Fly fly) => fly.render(canvas));
 
@@ -112,6 +127,7 @@ class LangawGame extends Game {
     spawner.update(t);
     flies.forEach((Fly fly) => fly.update(t));
     flies.removeWhere((Fly fly) => fly.isOffScreen);
+    if (activeView == View.playing) scoreDisplay.update(t);
   }
 
   void resize(Size size) {
