@@ -70,6 +70,8 @@ class LangawGame extends Game {
     startButton = StartButton(this);
     helpButton = HelpButton(this);
     creditsButton = CreditsButton(this);
+    musicButton = MusicButton(this);
+    soundButton = SoundButton(this);
 
     spawner = FlySpawner(this);
 
@@ -134,18 +136,12 @@ class LangawGame extends Game {
     flies.forEach((Fly fly) => fly.render(canvas));
 
     if (activeView == View.home) homeView.render(canvas);
-
+    if (activeView == View.lost) lostView.render(canvas);
     if (activeView == View.home || activeView == View.lost) {
       startButton.render(canvas);
       helpButton.render(canvas);
       creditsButton.render(canvas);
     }
-
-    if (activeView == View.lost) lostView.render(canvas);
-
-    helpButton.render(canvas);
-    creditsButton.render(canvas);
-
     musicButton.render(canvas);
     soundButton.render(canvas);
 
