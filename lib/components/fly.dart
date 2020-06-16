@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flame/flame.dart';
 import 'package:flame_game/components/callout.dart';
 import 'package:flame_game/langaw-game.dart';
 import 'package:flame/sprite.dart';
@@ -69,6 +70,10 @@ class Fly {
   void onTapDown() {
     if (!isDead) {
       isDead = true;
+      if (game.soundButton.isEnabled) {
+        Flame.audio.play('sfx/ouch' + (game.rnd.nextInt(11) + 1).toString() + '.ogg');
+      }
+
 
       if (game.activeView == View.playing) {
         // increase the score by one each time.
