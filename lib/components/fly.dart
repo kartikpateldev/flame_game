@@ -33,12 +33,12 @@ class Fly {
 
   void render(Canvas c) {
     if (isDead) {
-      deadSprite.renderRect(c, flyRect.inflate(2));
+      deadSprite.renderRect(c, flyRect.inflate(flyRect.width / 2));
     } else {
-      flyingSprite[flyingSpriteIndex.toInt()].renderRect(c, flyRect.inflate(2));
-    }
-    if (game.activeView == View.playing) {
-      callout.render(c);
+      flyingSprite[flyingSpriteIndex.toInt()].renderRect(c, flyRect.inflate(flyRect.width / 2));
+      if (game.activeView == View.playing) {
+        callout.render(c);
+      }
     }
   }
 
@@ -50,7 +50,7 @@ class Fly {
       }
     }else{
       flyingSpriteIndex += 30 * t;
-      if (flyingSpriteIndex >= 2) {
+      while (flyingSpriteIndex >= 2) {
         flyingSpriteIndex -= 2;
       }
 
